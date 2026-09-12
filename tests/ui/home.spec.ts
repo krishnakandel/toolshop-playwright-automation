@@ -1,16 +1,6 @@
-// import { test, expect } from '@playwright/test';
-
-// test('Toolshop homepage loads successfully', async ({ page }) => {
-
-//   await page.goto('/');
-
-//   await expect(page).toHaveTitle(/Practice Software Testing/);
-
-// });
 
 import { test, expect } from '@playwright/test';
-
-test.describe('Toolshop basic UI tests', () => {
+test.describe('Toolshop home page tests', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -26,7 +16,6 @@ test.describe('Toolshop basic UI tests', () => {
 
   test('search field is visible', async ({ page }) => {
     const searchBox = page.getByPlaceholder(/search/i);
-
     await expect(searchBox).toBeVisible();
   });
 
@@ -34,17 +23,9 @@ test.describe('Toolshop basic UI tests', () => {
     const searchBox = page.getByPlaceholder(/search/i);
 
     await searchBox.fill('pliers');
-
-    // Depending on the current UI, Enter may trigger the search.
     await searchBox.press('Enter');
 
     await expect(page.getByText(/pliers/i).first()).toBeVisible();
-  });
-
-  test('login page can be opened', async ({ page }) => {
-    await page.goto('/auth/login');
-
-    await expect(page).toHaveURL(/auth\/login/);
   });
 
 });
