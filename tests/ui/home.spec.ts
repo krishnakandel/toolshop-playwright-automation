@@ -28,4 +28,38 @@ test.describe('Toolshop home page tests', () => {
     await expect(page.getByText(/pliers/i).first()).toBeVisible();
   });
 
+  test('search field accepts entered text', async ({ page }) => {
+    const searchBox = page.getByPlaceholder(/search/i);
+
+    await searchBox.fill('hammer');
+
+    await expect(searchBox).toHaveValue('hammer');
+  });
+
+  test('user can open a product from search results', async ({ page }) => {
+
+    const searchBox = page.getByPlaceholder(/search/i);
+
+    await searchBox.fill('pliers');
+    await searchBox.press('Enter');
+
+    const product = page
+      .getByRole('link')
+      .filter({ hasText: /pliers/i })
+      .first();
+
+    await expect(product).toBeVisible();
+
+    await product.click();
+
+    await expect(page).toHaveURL(/\/product\//);
+  });
+
+
+  test('product cards display prices', async ({ page }) => {
+    const price = page.getByText(/\$\d+/).first();
+
+    await expect(price).toBeVisible();
+  });
+
 });
