@@ -1,0 +1,1 @@
+git status; git add .; git commit -m "Add more tests for home page"; git push

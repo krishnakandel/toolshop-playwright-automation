@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  ui-test:
+  ui-tests:
     runs-on: ubuntu-latest
 
     steps:
