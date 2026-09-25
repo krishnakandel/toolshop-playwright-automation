@@ -1,60 +1,71 @@
 import { defineConfig, devices } from '@playwright/test';
-import 'dotenv/config';
 
 export default defineConfig({
   testDir: './tests',
-
   fullyParallel: true,
-
   forbidOnly: !!process.env.CI,
-
   retries: process.env.CI ? 2 : 0,
-
   workers: process.env.CI ? 1 : undefined,
-
   reporter: 'html',
 
   use: {
     baseURL: 'https://practicesoftwaretesting.com',
-
+    testIdAttribute: 'data-test',
     trace: 'on-first-retry',
-
     screenshot: 'only-on-failure',
-
     video: 'retain-on-failure',
   },
 
   projects: [
-    // Authentication setup
+    // 1. ACCOUNT SETUP
+    // Creates one fresh user through the registration UI
     {
-      name: 'setup',
-      testMatch: /.*auth\.setup\.ts/,
+      name: 'account-setup',
+      testMatch: '**/setup/account.setup.ts',
+      use: { ...devices['Desktop Chrome'] },
     },
 
-    // Tests that do NOT need login
+    // 2. AUTHENTICATION SETUP
+    // Logs in with the fresh account and creates .auth/user.json
+    {
+      name: 'auth-setup',
+      testMatch: '**/setup/auth.setup.ts',
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['account-setup'],
+    },
+
+    // 3. PUBLIC TESTS
+    // No account and no storageState required
     {
       name: 'chromium-public',
-
-      testMatch: /.*\/public\/.*\.spec\.ts/,
-
-      use: {
-        ...devices['Desktop Chrome'],
-      },
+      testMatch: [
+        '**/ui/public/home.spec.ts',
+        '**/ui/public/product.spec.ts',
+        '**/ui/public/registration.spec.ts',
+        '**/ui/public/search.spec.ts',
+      ],
+      use: { ...devices['Desktop Chrome'] },
     },
 
-    // Tests that require authentication
+    // 4. LOGIN TESTS
+    // Fresh account must exist first, but tests start logged out
+    {
+      name: 'chromium-login',
+      testMatch: '**/ui/public/login.spec.ts',
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['account-setup'],
+    },
+
+    // 5. AUTHENTICATED TESTS
+    // Fresh account -> login -> storageState -> tests
     {
       name: 'chromium-authenticated',
-
-      testMatch: /.*\/authenticated\/.*\.spec\.ts/,
-
+      testMatch: '**/ui/authenticated/**/*.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
-
         storageState: '.auth/user.json',
       },
-
-      dependencies: ['setup'],
+      dependencies: ['auth-setup'],
     },
   ],
 });

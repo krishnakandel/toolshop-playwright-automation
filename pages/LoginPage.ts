@@ -7,12 +7,20 @@ export class LoginPage {
   readonly passwordInput: Locator;
   readonly loginButton: Locator;
 
+  readonly loginError: Locator;
+  readonly emailError: Locator;
+  readonly passwordError: Locator;
+
   constructor(page: Page) {
     this.page = page;
 
-    this.emailInput = page.locator('[data-test="email"]');
-    this.passwordInput = page.locator('[data-test="password"]');
-    this.loginButton = page.locator('[data-test="login-submit"]');
+    this.emailInput = page.getByTestId('email');
+    this.passwordInput = page.getByTestId('password');
+    this.loginButton = page.getByTestId('login-submit');
+
+    this.loginError = page.getByTestId('login-error');
+    this.emailError = page.getByTestId('email-error');
+    this.passwordError = page.getByTestId('password-error');
   }
 
   async goto() {
