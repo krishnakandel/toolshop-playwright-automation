@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+const apiBaseURL = 'https://api.practicesoftwaretesting.com';
 
 export default defineConfig({
   testDir: './tests',
@@ -21,7 +22,7 @@ export default defineConfig({
     // Creates one fresh user through the registration UI
     {
       name: 'account-setup',
-      testMatch: '**/setup/account.setup.ts',
+      testMatch: '**/ui/setup/account.setup.ts',
       use: { ...devices['Desktop Chrome'] },
     },
 
@@ -29,7 +30,7 @@ export default defineConfig({
     // Logs in with the fresh account and creates .auth/user.json
     {
       name: 'auth-setup',
-      testMatch: '**/setup/auth.setup.ts',
+      testMatch: '**/ui/setup/auth.setup.ts',
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['account-setup'],
     },
@@ -67,5 +68,42 @@ export default defineConfig({
       },
       dependencies: ['auth-setup'],
     },
+    // 6. API ACCOUNT SETUP
+{
+  name: 'api-account-setup',
+  testMatch: '**/api/setup/api-account.setup.ts',
+  use: { baseURL: apiBaseURL },
+},
+
+// 7. API AUTH SETUP
+{
+  name: 'api-auth-setup',
+  testMatch: '**/api/setup/api-auth.setup.ts',
+  use: { baseURL: apiBaseURL },
+  dependencies: ['api-account-setup'],
+},
+
+// 8. PUBLIC API TESTS
+{
+  name: 'api-public',
+  testMatch: '**/api/public/**/*.api.spec.ts',
+  use: { baseURL: apiBaseURL },
+},
+
+// 9. API LOGIN TESTS
+{
+  name: 'api-login',
+  testMatch: '**/api/auth/**/*.api.spec.ts',
+  use: { baseURL: apiBaseURL },
+  dependencies: ['api-account-setup'],
+},
+
+// 10. AUTHENTICATED API TESTS
+{
+  name: 'api-authenticated',
+  testMatch: '**/api/authenticated/**/*.api.spec.ts',
+  use: { baseURL: apiBaseURL },
+  dependencies: ['api-auth-setup'],
+},
   ],
 });

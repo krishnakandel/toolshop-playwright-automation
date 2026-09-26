@@ -1,6 +1,6 @@
 import { test as setup, expect } from '@playwright/test';
-import { RegistrationPage } from '../../pages/RegistrationPage';
-import { generateTestUser, saveTestUser } from '../../utils/testUser';
+import { RegistrationPage } from '../../../pages/RegistrationPage';
+import { generateTestUser, saveTestUser } from '../../../utils/testUser';
 
 setup('create fresh test account through UI', async ({ page }) => {
   const user = generateTestUser();
